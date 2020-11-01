@@ -9,21 +9,16 @@ namespace reto2Propietaria
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     // [System.Web.Script.Services.ScriptService]
-    public class WebService1 : System.Web.Services.WebService
+    public class GestionNomina : System.Web.Services.WebService
     {
 
         [WebMethod]
-        public string HelloWorld()
+        public string Greetings()
         {
-            return "Hello World";
+            return "Saludos, que tal la life.";
         }
 
-        [WebMethod]
-        public double Numbers(double valueOne, double valueTwo) 
-        {
-
-            return valueOne + valueTwo;
-        }
+        
 
         [WebMethod]
         public string AddEmployee(EmployeeDTO employee)

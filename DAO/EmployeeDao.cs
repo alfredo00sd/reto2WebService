@@ -5,14 +5,12 @@ using System.Data.SqlClient;
 
 namespace reto2Propietaria
 {
+    //Employee CRUD
     public class EmployeeDao
     {
         SqlDataReader reader;
         readonly SqlCommand Cmd = new SqlCommand();
         readonly DBCon Connection = new DBCon();
-
-
-        //Employee CRUD
 
         //Create Employees
         public string Add(EmployeeDTO employee) {
@@ -20,6 +18,7 @@ namespace reto2Propietaria
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, getDate(), null, 1)";
             Cmd.CommandType = CommandType.Text;
+            
             FillEmployeeParams(Cmd, employee);
 
             int count = Cmd.ExecuteNonQuery();
@@ -34,8 +33,6 @@ namespace reto2Propietaria
 
                 return "Error tratando de insertar...";
             }
-
-
         }
 
         //Read all employees
@@ -45,7 +42,7 @@ namespace reto2Propietaria
             List<Employee> dtoList;
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "select * from employees";
+            Cmd.CommandText = "select * from employee";
             Cmd.CommandType = CommandType.Text;
             reader = Cmd.ExecuteReader();
 
@@ -56,11 +53,86 @@ namespace reto2Propietaria
 
             return dtoList;
         }
-
-        public void Edit() { 
         
+        //Get by Name, cedula, department
+        public Employee GetEmployeeBy(string argument) 
+        {
+
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "select * from employee where name like @argument or cedula like @argument or department like @argument";
+            Cmd.CommandType = CommandType.Text;
+            Cmd.Parameters.AddWithValue("@argument", argument);
+
+            reader = Cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                Employee employee = new Employee
+                {
+                    Id = reader.GetInt32(0),
+                    NomId = reader.GetInt32(1),
+                    Cedula = reader.GetString(2),
+                    Name = reader.GetString(3),
+                    Department = reader.GetString(4),
+                    WorkPosition = reader.GetString(5),
+                    Salary = reader.GetDouble(6),
+                    FirstDay = reader.GetDateTime(7),
+                    LastDay = reader.GetDateTime(8),
+                    State = reader.GetInt32(9)
+                };
+                return employee;
+            }
+            else 
+            {
+                return null;
+            }
         }
-        public void Delete() { }
+        
+        //Update employee
+        public string Edit(EmployeeDTO dTO) {
+
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "update employee set ";
+            Cmd.CommandType = CommandType.Text;
+
+            FillEmployeeParams(Cmd, dTO);
+
+            Cmd.Parameters.Clear();
+            Connection.Close();
+
+            if (Cmd.ExecuteNonQuery() > 0)
+            {
+                return "Empleado ingresado";
+            }
+            else 
+            {
+                return "Error actualizando el empleado";
+            }
+           
+        }
+        
+        //Delete employee
+        public string Delete(int id) 
+        {
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "delete from employee where id = @id ";
+            Cmd.CommandType = CommandType.Text;
+            Cmd.Parameters.AddWithValue("@id", id);
+
+            int conunt = Cmd.ExecuteNonQuery();
+
+            Cmd.Parameters.Clear();
+            Connection.Close();
+
+            if (conunt > 0)
+            {
+                return "Empleado eliminado";
+            }
+            else 
+            {
+                return "Error al intentar eliminar";
+            }
+        }
 
         //Utils
         public List<Employee> FillEmployeeList(SqlDataReader reader)
@@ -98,6 +170,5 @@ namespace reto2Propietaria
             cmd.Parameters.AddWithValue("@WorkPosition", emp.WorkPosition);
             cmd.Parameters.AddWithValue("@Salary", emp.Salary);
         }
-
     }
 }
