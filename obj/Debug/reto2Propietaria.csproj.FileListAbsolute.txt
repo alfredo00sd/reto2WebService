@@ -52,7 +52,6 @@ C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\ros
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\roslyn\VBCSCompiler.exe.config
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.csprojAssemblyReference.cache
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.csproj.CoreCompileInputs.cache
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.csproj.CopyComplete
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.dll

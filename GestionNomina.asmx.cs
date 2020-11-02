@@ -1,5 +1,4 @@
 ﻿using reto2Propietaria.DTOs;
-using System;
 using System.Collections.Generic;
 using System.Web.Services;
 
@@ -10,10 +9,10 @@ namespace reto2Propietaria
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     // [System.Web.Script.Services.ScriptService]
-    public class GestionNomina : System.Web.Services.WebService
+    public class GestionNomina : WebService
     {
 
-        private EmployeeDao DAO = new EmployeeDao();
+        private readonly EmployeeDao DAO = new EmployeeDao();
 
         [WebMethod]
         public string Greetings()
@@ -21,15 +20,10 @@ namespace reto2Propietaria
             return "Saludos, que tal la life.";
         }
 
-        
-
         [WebMethod]
         public string AddEmployee(EmployeeDTO employee)
-        {
-            EmployeeDao dao = new EmployeeDao();
-            
-
-            return dao.Add(employee);
+        {            
+            return DAO.Add(employee);
         }
 
         [WebMethod]
@@ -47,7 +41,6 @@ namespace reto2Propietaria
         [WebMethod]
         public Employee Buscar_Empleado(string argumento)
         {
-
             return DAO.GetEmployeeBy(argumento);
         }
     }
