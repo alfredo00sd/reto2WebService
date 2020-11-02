@@ -12,8 +12,8 @@ namespace reto2Propietaria
         public string Department { get; set; }
         public string WorkPosition { get; set; }
         public decimal Salary { get; set; }
-        public DateTime FirstDay { get; set; }
-        public DateTime LastDay { get; set; }
+        public string FirstDay { get; set; }
+        public string LastDay { get; set; }
         public int State { get; set; }
     }
 }

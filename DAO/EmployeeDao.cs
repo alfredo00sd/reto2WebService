@@ -13,12 +13,13 @@ namespace reto2Propietaria
         readonly DBCon Connection = new DBCon();
 
         //Create Employees
-        public string Add(EmployeeDTO employee) {
-            
+        public string Add(EmployeeDTO employee)
+        {
+
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, getDate(), null, 1)";
+            Cmd.CommandText = "insert into employee values(@NomId, @Name, @Cedula, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
             Cmd.CommandType = CommandType.Text;
-            
+
             FillEmployeeParams(Cmd, employee);
 
             int count = Cmd.ExecuteNonQuery();
@@ -29,7 +30,8 @@ namespace reto2Propietaria
 
                 return "Empleado, " + employee.Name + " agregado!";
             }
-            else {
+            else
+            {
 
                 return "Error tratando de insertar...";
             }
@@ -42,7 +44,7 @@ namespace reto2Propietaria
             List<Employee> dtoList;
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "select * from employee";
+            Cmd.CommandText = "select * from employee where EmpState = 1";
             Cmd.CommandType = CommandType.Text;
             reader = Cmd.ExecuteReader();
 
@@ -53,9 +55,9 @@ namespace reto2Propietaria
 
             return dtoList;
         }
-        
+
         //Get by Name, cedula, department
-        public Employee GetEmployeeBy(string argument) 
+        public Employee GetEmployeeBy(string argument)
         {
 
             Cmd.Connection = Connection.Open();
@@ -76,20 +78,21 @@ namespace reto2Propietaria
                     Department = reader.GetString(4),
                     WorkPosition = reader.GetString(5),
                     Salary = reader.GetDecimal(6),
-                    FirstDay = reader.GetDateTime(7),
-                    LastDay = reader.GetDateTime(8),
+                    FirstDay = reader.GetString(7),
+                    LastDay = reader.GetString(8),
                     State = reader.GetInt32(9)
                 };
                 return employee;
             }
-            else 
+            else
             {
                 return null;
             }
         }
-        
+
         //Update employee
-        public string Edit(EmployeeDTO dTO) {
+        public string Edit(EmployeeDTO dTO)
+        {
 
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = "update employee set ";
@@ -104,15 +107,15 @@ namespace reto2Propietaria
             {
                 return "Empleado ingresado";
             }
-            else 
+            else
             {
                 return "Error actualizando el empleado";
             }
-           
+
         }
-        
+
         //Delete employee
-        public string Delete(int id) 
+        public string Delete(int id)
         {
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = "delete from employee where id = @id ";
@@ -128,7 +131,7 @@ namespace reto2Propietaria
             {
                 return "Empleado eliminado";
             }
-            else 
+            else
             {
                 return "Error al intentar eliminar";
             }
@@ -138,7 +141,7 @@ namespace reto2Propietaria
         public List<Employee> FillEmployeeList(SqlDataReader reader)
         {
             List<Employee> empList = new List<Employee>();
-            
+
             while (reader.Read())
             {
                 empList.Add(new Employee
@@ -150,8 +153,8 @@ namespace reto2Propietaria
                     Department = reader.GetString(4),
                     WorkPosition = reader.GetString(5),
                     Salary = reader.GetDecimal(6),
-                    FirstDay = reader.GetDateTime(7),
-                    LastDay = reader.GetDateTime(8),
+                    FirstDay = reader.GetString(7),
+                    LastDay = reader.GetString(8),
                     State = reader.GetInt32(9)
                 });
             }
