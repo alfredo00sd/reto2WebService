@@ -1,5 +1,6 @@
 ﻿using reto2Propietaria.DTOs;
 using System;
+using System.Collections.Generic;
 using System.Web.Services;
 
 namespace reto2Propietaria
@@ -11,6 +12,8 @@ namespace reto2Propietaria
     // [System.Web.Script.Services.ScriptService]
     public class GestionNomina : System.Web.Services.WebService
     {
+
+        private EmployeeDao DAO = new EmployeeDao();
 
         [WebMethod]
         public string Greetings()
@@ -27,6 +30,25 @@ namespace reto2Propietaria
             
 
             return dao.Add(employee);
+        }
+
+        [WebMethod]
+        public List<Employee> Listar_Empleados()
+        {
+            return DAO.GetEmployees();
+        }
+
+        [WebMethod]
+        public string Remover_Empleado(int id)
+        {
+            return DAO.Delete(id);
+        }
+
+        [WebMethod]
+        public Employee Buscar_Empleado(string argumento)
+        {
+
+            return DAO.GetEmployeeBy(argumento);
         }
     }
 }
