@@ -75,7 +75,7 @@ namespace reto2Propietaria
                     Name = reader.GetString(3),
                     Department = reader.GetString(4),
                     WorkPosition = reader.GetString(5),
-                    Salary = reader.GetDouble(6),
+                    Salary = reader.GetDecimal(6),
                     FirstDay = reader.GetDateTime(7),
                     LastDay = reader.GetDateTime(8),
                     State = reader.GetInt32(9)
@@ -149,7 +149,7 @@ namespace reto2Propietaria
                     Name = reader.GetString(3),
                     Department = reader.GetString(4),
                     WorkPosition = reader.GetString(5),
-                    Salary = reader.GetDouble(6),
+                    Salary = reader.GetDecimal(6),
                     FirstDay = reader.GetDateTime(7),
                     LastDay = reader.GetDateTime(8),
                     State = reader.GetInt32(9)
