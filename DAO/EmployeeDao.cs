@@ -11,28 +11,31 @@ namespace reto2Propietaria
         SqlDataReader reader;
         readonly SqlCommand Cmd = new SqlCommand();
         readonly DBCon Connection = new DBCon();
+        //Queries
+        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
+        private const string GET_ALL_ACTIVES = "select * from employee where EmpState = 1";
+        private const string GET_BY = "select * from employee where name like @argument or cedula like @argument or department like @argument";
+        private const string DELETE = "delete from employee where id = @id ";
+        private const string UPDATE = "update employee set NomId = @NomId, Cedula = @Cedula, Name = @Name, Department = @Department, WorkPosition = @WorkPosition, Salary = @Salary where Id = @Id";
 
         //Create Employees
         public string Add(EmployeeDTO employee)
         {
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "insert into employee values(@NomId, @Name, @Cedula, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
+            Cmd.CommandText = INSERT;
             Cmd.CommandType = CommandType.Text;
 
             FillEmployeeParams(Cmd, employee);
 
             int count = Cmd.ExecuteNonQuery();
 
-
             if (count > 0)
             {
-
                 return "Empleado, " + employee.Name + " agregado!";
             }
             else
             {
-
                 return "Error tratando de insertar...";
             }
         }
@@ -40,11 +43,10 @@ namespace reto2Propietaria
         //Read all employees
         public List<Employee> GetEmployees()
         {
-
             List<Employee> dtoList;
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "select * from employee where EmpState = 1";
+            Cmd.CommandText = GET_ALL_ACTIVES;
             Cmd.CommandType = CommandType.Text;
             reader = Cmd.ExecuteReader();
 
@@ -57,11 +59,11 @@ namespace reto2Propietaria
         }
 
         //Get by Name, cedula, department
+        //Retornar una lista con todos los matchs para la busqueda
         public Employee GetEmployeeBy(string argument)
         {
-
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "select * from employee where name like @argument or cedula like @argument or department like @argument";
+            Cmd.CommandText = GET_BY;
             Cmd.CommandType = CommandType.Text;
             Cmd.Parameters.AddWithValue("@argument", argument);
 
@@ -91,34 +93,39 @@ namespace reto2Propietaria
         }
 
         //Update employee
-        public string Edit(EmployeeDTO dTO)
+        //Consultar Id para retornar la info del empleado y poder editar...
+        public string Edit(Employee e)
         {
-
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "update employee set ";
+            Cmd.CommandText = UPDATE;
             Cmd.CommandType = CommandType.Text;
 
-            FillEmployeeParams(Cmd, dTO);
+            Cmd.Parameters.AddWithValue("@Id", e.Id);
+            Cmd.Parameters.AddWithValue("@NomId", e.NomId);
+            Cmd.Parameters.AddWithValue("@Cedula", e.Cedula);
+            Cmd.Parameters.AddWithValue("@Name", e.Name);
+            Cmd.Parameters.AddWithValue("@Department", e.Department);
+            Cmd.Parameters.AddWithValue("@WorkPosition", e.WorkPosition);
+            Cmd.Parameters.AddWithValue("@Salary", e.Salary);
 
             Cmd.Parameters.Clear();
             Connection.Close();
 
             if (Cmd.ExecuteNonQuery() > 0)
             {
-                return "Empleado ingresado";
+                return "Empleado actualizado!";
             }
             else
             {
                 return "Error actualizando el empleado";
             }
-
         }
 
         //Delete employee
         public string Delete(int id)
         {
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "delete from employee where id = @id ";
+            Cmd.CommandText = DELETE;
             Cmd.CommandType = CommandType.Text;
             Cmd.Parameters.AddWithValue("@id", id);
 

@@ -56,3 +56,4 @@ C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Deb
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.csproj.CopyComplete
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.pdb
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.csprojAssemblyReference.cache

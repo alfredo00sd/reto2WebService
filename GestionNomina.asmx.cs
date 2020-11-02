@@ -15,15 +15,21 @@ namespace reto2Propietaria
         private readonly EmployeeDao DAO = new EmployeeDao();
 
         [WebMethod]
-        public string Greetings()
+        public string Greetings(string name)
         {
-            return "Saludos, que tal la life.";
+            return "Saludos " + name + ", que tal la life.";
         }
 
         [WebMethod]
-        public string AddEmployee(EmployeeDTO employee)
+        public string Agregar_Empleado(EmployeeDTO employee)
         {            
             return DAO.Add(employee);
+        }
+
+        [WebMethod]
+        public string Modificar_Empleado(Employee employee)
+        {
+            return DAO.Edit(employee);
         }
 
         [WebMethod]
