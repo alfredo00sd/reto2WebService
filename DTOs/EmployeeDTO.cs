@@ -8,6 +8,6 @@ namespace reto2Propietaria.DTOs
         public string Name { get; set; }
         public string Department { get; set; }
         public string WorkPosition { get; set; }
-        public double Salary { get; set; }
+        public decimal Salary { get; set; }
     }
 }

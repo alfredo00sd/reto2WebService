@@ -12,12 +12,12 @@ namespace reto2Propietaria
         readonly SqlCommand Cmd = new SqlCommand();
         readonly DBCon Connection = new DBCon();
         //Queries
-        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
-        private const string GET_ALL_ACTIVES = "select * from employee where EmpState = 1";
-        private const string GET_BY = "select * from employee where name like @argument or cedula like @argument or department like @argument";
-        private const string DELETE = "delete from employee where id = @id ";
         private const string UPDATE = "update employee set NomId = @NomId, Cedula = @Cedula, Name = @Name, Department = @Department, WorkPosition = @WorkPosition, Salary = @Salary where Id = @Id";
-
+        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
+        private const string GET_BY_ID = "select * from employee where id = @Id or cedula = @Cedula";
+        private const string GET_ALL_ACTIVES = "select * from employee where EmpState = 1";
+        private const string DELETE = "update employee set EmpState = 0, lastDay = convert(date, getDate()) and where id = @id ";
+        
         //Create Employees
         public string Add(EmployeeDTO employee)
         {
@@ -60,12 +60,28 @@ namespace reto2Propietaria
 
         //Get by Name, cedula, department
         //Retornar una lista con todos los matchs para la busqueda
-        public Employee GetEmployeeBy(string argument)
+        public List<Employee> GetEmployeeBy(string criteria)
+        {
+            List<Employee> dtoList;
+
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "select * from employee where name like '%" + criteria + "%' or cedula like '%" + criteria + "%' or department like '%" + criteria + "%' and EmpState = 1";
+            Cmd.CommandType = CommandType.Text;
+
+            reader = Cmd.ExecuteReader();
+            
+            return FillEmployeeList(reader);
+        }
+
+        //Get by Name, cedula, department
+        //Retornar una lista con todos los matchs para la busqueda
+        public Employee GetEmployeeById(int Id, string Cedula)
         {
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = GET_BY;
+            Cmd.CommandText = GET_BY_ID;
             Cmd.CommandType = CommandType.Text;
-            Cmd.Parameters.AddWithValue("@argument", argument);
+            Cmd.Parameters.AddWithValue("@Id", Id);
+            Cmd.Parameters.AddWithValue("@Cedula", Cedula);
 
             reader = Cmd.ExecuteReader();
 
@@ -108,15 +124,19 @@ namespace reto2Propietaria
             Cmd.Parameters.AddWithValue("@WorkPosition", e.WorkPosition);
             Cmd.Parameters.AddWithValue("@Salary", e.Salary);
 
-            Cmd.Parameters.Clear();
-            Connection.Close();
-
+            
             if (Cmd.ExecuteNonQuery() > 0)
             {
+                Cmd.Parameters.Clear();
+                Connection.Close();
+
                 return "Empleado actualizado!";
             }
             else
             {
+                Cmd.Parameters.Clear();
+                Connection.Close();
+
                 return "Error actualizando el empleado";
             }
         }

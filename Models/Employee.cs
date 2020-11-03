@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace reto2Propietaria
+﻿namespace reto2Propietaria
 {
     public class Employee
     {

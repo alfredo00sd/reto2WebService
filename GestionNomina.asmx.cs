@@ -39,13 +39,20 @@ namespace reto2Propietaria
         }
 
         [WebMethod]
+        public Employee Listar_Empleado_Por_Id(int Id, string Cedula)
+        {
+            return DAO.GetEmployeeById(Id, Cedula);
+        }
+
+
+        [WebMethod]
         public string Remover_Empleado(int id)
         {
             return DAO.Delete(id);
         }
 
         [WebMethod]
-        public Employee Buscar_Empleado(string argumento)
+        public List<Employee> Buscar_Empleado(string argumento)
         {
             return DAO.GetEmployeeBy(argumento);
         }
