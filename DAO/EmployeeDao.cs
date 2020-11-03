@@ -16,7 +16,7 @@ namespace reto2Propietaria
         private const string INSERT = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
         private const string GET_BY_ID = "select * from employee where id = @Id or cedula = @Cedula";
         private const string GET_ALL_ACTIVES = "select * from employee where EmpState = 1";
-        private const string DELETE = "update employee set EmpState = 0, lastDay = convert(date, getDate()) and where id = @id ";
+        private const string DELETE = "update employee set EmpState = 0, lastDay = convert(date, getDate()) where id = @id ";
         
         //Create Employees
         public string Add(EmployeeDTO employee)
