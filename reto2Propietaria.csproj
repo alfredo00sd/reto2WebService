@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\DBCon.cs" />
+    <Compile Include="DAO\EmployeeDepartmentDao.cs" />
     <Compile Include="DAO\EntryDao.cs" />
     <Compile Include="GestionAdmin.asmx.cs">
       <DependentUpon>GestionAdmin.asmx</DependentUpon>
@@ -85,6 +86,7 @@
     <Compile Include="Models\DeductionType.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="DAO\EmployeeDao.cs" />
+    <Compile Include="Models\EmployeeDepartment.cs" />
     <Compile Include="Models\EntryType.cs" />
     <Compile Include="Models\TransaccionLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,21 +10,46 @@ namespace reto2Propietaria
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     // [System.Web.Script.Services.ScriptService]
-    public class GestionIngDeb : System.Web.Services.WebService
+    public class GestionIngDeb : WebService
     {
 
-        private readonly EntryDao DAO = new EntryDao();
+        private readonly EntryDao entryDAO = new EntryDao();
+        private readonly EmployeeDepartmentDao departmentDAO = new EmployeeDepartmentDao();
 
         //----------------------------------------------Departments
         //Add
+        [WebMethod]
+        public string Agregar_Departamento(EmployeeDepartment department) 
+        {
+            return departmentDAO.Add(department);
+        }
+
         //Edit
+        [WebMethod]
+        public string Editar_Departamento(EmployeeDepartment department)
+        {
+            return departmentDAO.Edit(department);
+        }
+
         //Remove
+        [WebMethod]
+        public string Remover_Departamento(int id)
+        {
+            return departmentDAO.Delete(id);
+        }
+
         //See all
+        [WebMethod]
+        public List<EmployeeDepartment> Listar_Departamentos()
+        {
+            return departmentDAO.GetAll();
+        }
+
 
         //----------------------------------------------Entry_type/Deduction_type
         //Add
         [WebMethod]
-        public string Add(EntryType entry, string tipoIngresoDeduccion) 
+        public string Agregar_Ing_Ded(EntryType entry, string tipoIngresoDeduccion) 
         {
 
             string result;
@@ -34,11 +59,11 @@ namespace reto2Propietaria
                 case "Ingreso" :
                 case "INGRESO" :
                 case "ingreso" :
-                    result = DAO.Add(entry, "entry_type"); break;
+                    result = entryDAO.Add(entry, "entry_type"); break;
                 case "Deduccion" :
                 case "deduccion" :
                 case "DEDUCCION" :
-                    result = DAO.Add(entry, "deduction_type");
+                    result = entryDAO.Add(entry, "deduction_type");
                     break;
 
                 default : result = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion"; break; 
@@ -50,7 +75,7 @@ namespace reto2Propietaria
         
         //Edit
         [WebMethod]
-        public string Edit(EntryType entry, string tipoIngresoDeduccion)
+        public string Actualizar_Ing_Ded(EntryType entry, string tipoIngresoDeduccion)
         {
 
             string result;
@@ -60,11 +85,11 @@ namespace reto2Propietaria
                 case "Ingreso":
                 case "INGRESO":
                 case "ingreso":
-                    result = DAO.Edit(entry, "entry_type"); break;
+                    result = entryDAO.Edit(entry, "entry_type"); break;
                 case "Deduccion":
                 case "deduccion":
                 case "DEDUCCION":
-                    result = DAO.Edit(entry, "deduction_type");
+                    result = entryDAO.Edit(entry, "deduction_type");
                     break;
 
                 default: result = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion"; break;
@@ -76,7 +101,7 @@ namespace reto2Propietaria
         
         //Remove
         [WebMethod]
-        public string Delete(int id, string tipoIngresoDeduccion)
+        public string Remover_Ing_Ded(int id, string tipoIngresoDeduccion)
         {
 
             string result;
@@ -86,11 +111,11 @@ namespace reto2Propietaria
                 case "Ingreso":
                 case "INGRESO":
                 case "ingreso":
-                    result = DAO.Delete(id, "entry_type"); break;
+                    result = entryDAO.Delete(id, "entry_type"); break;
                 case "Deduccion":
                 case "deduccion":
                 case "DEDUCCION":
-                    result = DAO.Delete(id, "deduction_type");
+                    result = entryDAO.Delete(id, "deduction_type");
                     break;
 
                 default: result = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion"; break;
@@ -102,7 +127,7 @@ namespace reto2Propietaria
         
         //See all
         [WebMethod]
-        public List<EntryType> GetAll(string tipoIngresoDeduccion)
+        public List<EntryType> Listar_Ing_Ded(string tipoIngresoDeduccion)
         {
 
             List<EntryType> result;
@@ -112,11 +137,11 @@ namespace reto2Propietaria
                 case "Ingreso":
                 case "INGRESO":
                 case "ingreso":
-                    result = DAO.GetAll("entry_type"); break;
+                    result = entryDAO.GetAll("entry_type"); break;
                 case "Deduccion":
                 case "deduccion":
                 case "DEDUCCION":
-                    result = DAO.GetAll("deduction_type");
+                    result = entryDAO.GetAll("deduction_type");
                     break;
 
                 default: 
