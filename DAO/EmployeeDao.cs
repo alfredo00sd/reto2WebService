@@ -1,5 +1,4 @@
-﻿using reto2Propietaria.DTOs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -11,15 +10,30 @@ namespace reto2Propietaria
         SqlDataReader reader;
         readonly SqlCommand Cmd = new SqlCommand();
         readonly DBCon Connection = new DBCon();
+
         //Queries
-        private const string UPDATE = "update employee set NomId = @NomId, Cedula = @Cedula, Name = @Name, Department = @Department, WorkPosition = @WorkPosition, Salary = @Salary where Id = @Id";
-        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Name, @Department, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
-        private const string GET_BY_ID = "select * from employee where id = @Id or cedula = @Cedula";
-        private const string GET_ALL_ACTIVES = "select * from employee where EmpState = 1";
-        private const string DELETE = "update employee set EmpState = 0, lastDay = convert(date, getDate()) where id = @id ";
-        
+        private const string UPDATE = "update employee set nomina_id = @NomId, dominican_id = @Cedula, name = @Name, last_name = @LastName, department = @Department, work_position = @WorkPosition, salary = @Salary where Id = @id";
+        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Department, @Name, @LastName, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
+        private const string GET_BY_ID = "select * from employee where id = @Id or dominican_id = @Cedula";
+        private const string GET_ALL_ACTIVES = "select * from employee where state = 1";
+        private const string DELETE = "update employee set state = 0, lastDay = convert(date, getDate()) where id = @id ";
+
+        //Get by Name, cedula, department
+        //Retornar una lista con todos los matchs para la busqueda
+        public List<Employee> GetEmployeeBy(string criteria)
+        {
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "select* from employee where name like '%" + criteria + "%' or last_name like '%" + criteria + "%' or dominican_id like '%" + criteria + "%' and state = 1"; ;
+            Cmd.CommandType = CommandType.Text;
+
+            reader = Cmd.ExecuteReader();
+
+            return FillEmployeeList(reader);
+        }
+
+
         //Create Employees
-        public string Add(EmployeeDTO employee)
+        public string Add(Employee employee)
         {
 
             Cmd.Connection = Connection.Open();
@@ -28,11 +42,13 @@ namespace reto2Propietaria
 
             FillEmployeeParams(Cmd, employee);
 
-            int count = Cmd.ExecuteNonQuery();
+            int result = Cmd.ExecuteNonQuery();
 
-            if (count > 0)
+            CloseConnections(Connection, Cmd, null);
+
+            if (result > 0)
             {
-                return "Empleado, " + employee.Name + " agregado!";
+                return "Emplead@, " + employee.Name + " agregado!";
             }
             else
             {
@@ -52,26 +68,11 @@ namespace reto2Propietaria
 
             dtoList = FillEmployeeList(reader);
 
-            Connection.Close();
-            reader.Close();
+            CloseConnections(Connection, null, reader);
 
             return dtoList;
         }
 
-        //Get by Name, cedula, department
-        //Retornar una lista con todos los matchs para la busqueda
-        public List<Employee> GetEmployeeBy(string criteria)
-        {
-            List<Employee> dtoList;
-
-            Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "select * from employee where name like '%" + criteria + "%' or cedula like '%" + criteria + "%' or department like '%" + criteria + "%' and EmpState = 1";
-            Cmd.CommandType = CommandType.Text;
-
-            reader = Cmd.ExecuteReader();
-            
-            return FillEmployeeList(reader);
-        }
 
         //Get by Name, cedula, department
         //Retornar una lista con todos los matchs para la busqueda
@@ -90,15 +91,16 @@ namespace reto2Propietaria
                 Employee employee = new Employee
                 {
                     Id = reader.GetInt32(0),
-                    NomId = reader.GetInt32(1),
+                    Nomina = reader.GetInt32(1),
                     Cedula = reader.GetString(2),
-                    Name = reader.GetString(3),
-                    Department = reader.GetString(4),
-                    WorkPosition = reader.GetString(5),
-                    Salary = reader.GetDecimal(6),
-                    FirstDay = reader.GetString(7),
-                    LastDay = reader.GetString(8),
-                    State = reader.GetInt32(9)
+                    DepartamentId = reader.GetInt32(3),
+                    Name = reader.GetString(4),
+                    LastName = reader.GetString(5),
+                    WorkPosition = reader.GetString(6),
+                    Salary = reader.GetDecimal(7),
+                    FirstDay = reader.GetString(8),
+                    LastDay = reader.GetString(9),
+                    Status = reader.GetBoolean(10)
                 };
                 return employee;
             }
@@ -109,35 +111,26 @@ namespace reto2Propietaria
         }
 
         //Update employee
-        //Consultar Id para retornar la info del empleado y poder editar...
+        //Consultar Id para retornar la info del empleado y poder editar... "Conversion failed when converting the nvarchar value 'Bianca' to data type int."
         public string Edit(Employee e)
         {
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = UPDATE;
             Cmd.CommandType = CommandType.Text;
 
-            Cmd.Parameters.AddWithValue("@Id", e.Id);
-            Cmd.Parameters.AddWithValue("@NomId", e.NomId);
-            Cmd.Parameters.AddWithValue("@Cedula", e.Cedula);
-            Cmd.Parameters.AddWithValue("@Name", e.Name);
-            Cmd.Parameters.AddWithValue("@Department", e.Department);
-            Cmd.Parameters.AddWithValue("@WorkPosition", e.WorkPosition);
-            Cmd.Parameters.AddWithValue("@Salary", e.Salary);
+            FillEmployeeParams(Cmd, e);
 
-            
-            if (Cmd.ExecuteNonQuery() > 0)
+            int result = Cmd.ExecuteNonQuery();
+
+            CloseConnections(Connection, Cmd, null);
+
+            if (result > 0)
             {
-                Cmd.Parameters.Clear();
-                Connection.Close();
-
-                return "Empleado actualizado!";
+                return "Emplead@ actualizado!";
             }
             else
             {
-                Cmd.Parameters.Clear();
-                Connection.Close();
-
-                return "Error actualizando el empleado";
+                return "Error actualizando emplead@";
             }
         }
 
@@ -151,12 +144,11 @@ namespace reto2Propietaria
 
             int conunt = Cmd.ExecuteNonQuery();
 
-            Cmd.Parameters.Clear();
-            Connection.Close();
+            CloseConnections(Connection, Cmd, null);
 
             if (conunt > 0)
             {
-                return "Empleado eliminado";
+                return "Emplead@ eliminado";
             }
             else
             {
@@ -174,31 +166,50 @@ namespace reto2Propietaria
                 empList.Add(new Employee
                 {
                     Id = reader.GetInt32(0),
-                    NomId = reader.GetInt32(1),
+                    Nomina = reader.GetInt32(1),
                     Cedula = reader.GetString(2),
-                    Name = reader.GetString(3),
-                    Department = reader.GetString(4),
-                    WorkPosition = reader.GetString(5),
-                    Salary = reader.GetDecimal(6),
-                    FirstDay = reader.GetString(7),
-                    LastDay = reader.GetString(8),
-                    State = reader.GetInt32(9)
+                    DepartamentId = reader.GetInt32(3),
+                    Name = reader.GetString(4),
+                    LastName = reader.GetString(5),
+                    WorkPosition = reader.GetString(6),
+                    Salary = reader.GetDecimal(7),
+                    FirstDay = reader.GetString(8),
+                    LastDay = reader.GetString(9),
+                    Status = reader.GetBoolean(10)
                 });
             }
-
-            reader.Close();
 
             return empList;
         }
 
-        private void FillEmployeeParams(SqlCommand cmd, EmployeeDTO emp)
+        private void FillEmployeeParams(SqlCommand cmd, Employee e)
         {
-            cmd.Parameters.AddWithValue("@NomId", emp.NomId);
-            cmd.Parameters.AddWithValue("@Cedula", emp.Cedula);
-            cmd.Parameters.AddWithValue("@Name", emp.Name);
-            cmd.Parameters.AddWithValue("@Department", emp.Department);
-            cmd.Parameters.AddWithValue("@WorkPosition", emp.WorkPosition);
-            cmd.Parameters.AddWithValue("@Salary", emp.Salary);
+            if (e.Id > 0) 
+            {
+                cmd.Parameters.AddWithValue("@Id", e.Id);
+            }
+            cmd.Parameters.AddWithValue("@NomId", e.Nomina);
+            cmd.Parameters.AddWithValue("@Cedula", e.Cedula);
+            cmd.Parameters.AddWithValue("@Name", e.Name);
+            cmd.Parameters.AddWithValue("@LastName", e.LastName);
+            cmd.Parameters.AddWithValue("@Department", e.DepartamentId);
+            cmd.Parameters.AddWithValue("@WorkPosition", e.WorkPosition);
+            cmd.Parameters.AddWithValue("@Salary", e.Salary);
+        }
+
+        private void CloseConnections(DBCon connection, SqlCommand command, SqlDataReader reader) 
+        {
+            if (command != null) 
+            {
+                command.Parameters.Clear();
+                connection.Close();
+            }
+
+            if (reader != null) 
+            {
+                reader.Close();
+            }
+
         }
     }
 }

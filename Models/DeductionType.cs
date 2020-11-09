@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Xml.Serialization;
 
 namespace reto2Propietaria.Models
 {
     public class DeductionType
     {
+        [XmlIgnore()]
         public int Id { get; set; }
         public string Title { get; set; }
-        public byte Salarydependent { get; set; }
-        public byte State { get; set; }
-
+        public string Description { get; set; }
+        public bool SalaryDependent { get; set; }
+        [XmlIgnore()]
+        public string AddedDate { get; set; }
+        public bool State { get; set; }
     }
 }

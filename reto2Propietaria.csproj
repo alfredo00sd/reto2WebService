@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -67,13 +68,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GestionAdmin.asmx" />
     <Content Include="index.html" />
     <Content Include="Web.config" />
     <Content Include="GestionNomina.asmx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\DBCon.cs" />
-    <Compile Include="DTOs\EmployeeDTO.cs" />
+    <Compile Include="DAO\EntryDao.cs" />
+    <Compile Include="GestionAdmin.asmx.cs">
+      <DependentUpon>GestionAdmin.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AcountingSeat.cs" />
     <Compile Include="Models\DeductionType.cs" />

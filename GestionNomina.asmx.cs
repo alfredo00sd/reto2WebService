@@ -1,5 +1,4 @@
-﻿using reto2Propietaria.DTOs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web.Services;
 
 namespace reto2Propietaria
@@ -15,19 +14,30 @@ namespace reto2Propietaria
         private readonly EmployeeDao DAO = new EmployeeDao();
 
         [WebMethod]
-        public string Greetings(string name)
+        public string Crear_Empleado(Employee employee)
         {
-            return "Saludos " + name + ", que tal la life.";
+            //if (ValidEmployee(employee))
+            //{
+                return DAO.Add(employee);
+            //}
+            //else 
+            //{
+              //  return "Empleado invalido, favor revisar parametros.";
+            //}
         }
 
-        [WebMethod]
-        public string Agregar_Empleado(EmployeeDTO employee)
-        {            
-            return DAO.Add(employee);
-        }
+        /*private bool ValidEmployee(Employee e) 
+        {
+            bool result;
+
+            result = e.Cedula.Length != 11;
+            result = long.TryParse(e.Cedula, out long number);
+            
+            return result;
+        }*/
 
         [WebMethod]
-        public string Modificar_Empleado(Employee employee)
+        public string Editar_Empleado(Employee employee)
         {
             return DAO.Edit(employee);
         }
@@ -37,13 +47,6 @@ namespace reto2Propietaria
         {
             return DAO.GetEmployees();
         }
-
-        [WebMethod]
-        public Employee Listar_Empleado_Por_Id(int Id, string Cedula)
-        {
-            return DAO.GetEmployeeById(Id, Cedula);
-        }
-
 
         [WebMethod]
         public string Remover_Empleado(int id)
