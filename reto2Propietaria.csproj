@@ -77,6 +77,7 @@
     <Compile Include="Config\DBCon.cs" />
     <Compile Include="DAO\EmployeeDepartmentDao.cs" />
     <Compile Include="DAO\EntryDao.cs" />
+    <Compile Include="DAO\ProcessDAO.cs" />
     <Compile Include="GestionAdmin.asmx.cs">
       <DependentUpon>GestionAdmin.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -98,6 +99,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\reto2Propietaria20201109165745 - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

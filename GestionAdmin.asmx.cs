@@ -15,6 +15,17 @@ namespace reto2Propietaria
 
         private readonly EntryDao entryDAO = new EntryDao();
         private readonly EmployeeDepartmentDao departmentDAO = new EmployeeDepartmentDao();
+        private readonly ProcessDAO processDAO = new ProcessDAO();
+
+
+        //----------------------------------------------Procesos
+        [WebMethod]
+        public string Procesar_Nomina(int idEmpleado) {
+
+            return processDAO.ProcessPago(idEmpleado);
+        }
+
+
 
         //----------------------------------------------Departments
         //Add
