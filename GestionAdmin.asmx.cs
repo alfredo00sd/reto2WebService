@@ -9,7 +9,7 @@ namespace reto2Propietaria
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
-    // [System.Web.Script.Services.ScriptService]
+    [System.Web.Script.Services.ScriptService]
     public class GestionIngDeb : WebService
     {
 
@@ -18,16 +18,28 @@ namespace reto2Propietaria
         private readonly ProcessDAO processDAO = new ProcessDAO();
 
 
-        //----------------------------------------------Procesos
+        //----------------------------------------------Procesos - Need validations
         [WebMethod]
-        public string Procesar_Nomina(int idEmpleado) {
+        //Recibe empleado, lista de ingresos y deducciones. concepto "pago nomina" total a ingresar
+        //estatus en 0 que significa sin enviar asiento contable.
+        public string Procesar_Nomina(int idEmpleado, string entries, string deductions, string concept, decimal amount) {
 
-            return processDAO.ProcessPago(idEmpleado);
+            //El calculo se hace en el front, me enviara solo que debo guardar.
+
+            //entries/deductions todas separadas por | puede ser... o ,
+            return processDAO.ProcessPago(idEmpleado, entries, deductions, concept, amount);
         }
 
+        //----------------------------------------------Accounting_seat
+        //Procesar/Enviar asiento contable a WS-externo
+
+        //Consultar(Ver las transacciones candidatas a ser enviadas)
+
+        //----------------------------------------------Consultas
+        //Consulta (transacciones x tipo y empleado en un rango de fechas)
 
 
-        //----------------------------------------------Departments
+        //----------------------------------------------Departments -Need validations
         //Add
         [WebMethod]
         public string Agregar_Departamento(EmployeeDepartment department) 
@@ -57,12 +69,11 @@ namespace reto2Propietaria
         }
 
 
-        //----------------------------------------------Entry_type/Deduction_type
+        //----------------------------------------------Entry_type/Deduction_type -Validaded
         //Add
         [WebMethod]
         public string Agregar_Ing_Ded(EntryType entry, string tipoIngresoDeduccion) 
         {
-
             string result;
 
             switch (tipoIngresoDeduccion) 
@@ -79,16 +90,13 @@ namespace reto2Propietaria
 
                 default : result = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion"; break; 
             }
-
             return result;
-        
         }
         
         //Edit
         [WebMethod]
         public string Actualizar_Ing_Ded(EntryType entry, string tipoIngresoDeduccion)
         {
-
             string result;
 
             switch (tipoIngresoDeduccion)
@@ -107,14 +115,12 @@ namespace reto2Propietaria
             }
 
             return result;
-
         }
         
         //Remove
         [WebMethod]
         public string Remover_Ing_Ded(int id, string tipoIngresoDeduccion)
         {
-
             string result;
 
             switch (tipoIngresoDeduccion)
@@ -131,16 +137,13 @@ namespace reto2Propietaria
 
                 default: result = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion"; break;
             }
-
             return result;
-
         }
         
         //See all
         [WebMethod]
         public List<EntryType> Listar_Ing_Ded(string tipoIngresoDeduccion)
         {
-
             List<EntryType> result;
 
             switch (tipoIngresoDeduccion)
@@ -160,35 +163,12 @@ namespace reto2Propietaria
                     result[0].Title = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion";
                     break;
             }
-
             return result;
-
         }
 
         //Get by
 
-        //----------------------------------------------Transaction_log
-        //Add
-        //Edit
-        //Remove
-        //See all
-
         //----------------------------------------------user_roles
-        //Add
-        //Edit
-        //Remove
-        //See all
-
-        //----------------------------------------------Accounting_seat
-        //Add
-        //Edit
-        //Remove
-        //See all
-
-
-
-
-        //----------------------------------------------Users/Employee CRUD
         //Add
         //Edit
         //Remove

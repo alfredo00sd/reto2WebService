@@ -16,7 +16,7 @@ namespace reto2Propietaria.DAO
         {
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "insert into "+table+" values(@Title, @Description, @SalaryDependent, GETDATE(), 1)";
+            Cmd.CommandText = "insert into "+table+" values(@Title, @Value, @Description, @SalaryDependent, GETDATE(), 1)";
             Cmd.CommandType = CommandType.Text;
 
             FillEntryParams(Cmd, entry);
@@ -40,7 +40,7 @@ namespace reto2Propietaria.DAO
         {
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "update "+table+" set title = @Title, description = @Description, salary_dependent = @SalaryDependent where id = @Id";
+            Cmd.CommandText = "update "+table+ " set title = @Title, value = @Value, description = @Description, salary_dependent = @SalaryDependent where id = @Id";
             Cmd.CommandType = CommandType.Text;
 
             FillEntryParams(Cmd, entry);
@@ -93,10 +93,11 @@ namespace reto2Propietaria.DAO
                 {
                     Id = Reader.GetInt32(0),
                     Title = Reader.GetString(1),
-                    Description = Reader.GetString(2),
-                    SalaryDependent = Reader.GetBoolean(3),
-                    AddedDate = Reader.GetString(4),
-                    State = Reader.GetBoolean(5)
+                    Value = Reader.GetDecimal(2),
+                    Description = Reader.GetString(3),
+                    SalaryDependent = Reader.GetBoolean(4),
+                    AddedDate = Reader.GetString(5),
+                    State = Reader.GetBoolean(6)
                 };
                 return entry;
             }
@@ -140,10 +141,11 @@ namespace reto2Propietaria.DAO
                 {
                     Id = reader.GetInt32(0),
                     Title = reader.GetString(1),
-                    Description = reader.GetString(2),
-                    SalaryDependent = reader.GetBoolean(3),
-                    AddedDate = reader.GetString(4),
-                    State = reader.GetBoolean(5)
+                    Value =  reader.GetDecimal(2),
+                    Description = reader.GetString(3),
+                    SalaryDependent = reader.GetBoolean(4),
+                    AddedDate = reader.GetString(5),
+                    State = reader.GetBoolean(6)
                 });
             }
 
@@ -157,6 +159,7 @@ namespace reto2Propietaria.DAO
                 cmd.Parameters.AddWithValue("@Id", e.Id);
             }
             cmd.Parameters.AddWithValue("@Title", e.Title);
+            cmd.Parameters.AddWithValue("@Value", e.Value);
             cmd.Parameters.AddWithValue("@Description", e.Description);
             cmd.Parameters.AddWithValue("@SalaryDependent", e.SalaryDependent);
         }

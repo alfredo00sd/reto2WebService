@@ -13,9 +13,9 @@ namespace reto2Propietaria.DAO
 
         //Queries
         private const string INSERT = "insert into departments values(@Code, @Description, 1)";
-        private const string DELETE = "update departments set state = 0 where id = @id";
-        private const string GET_BY = "select * from departments where id = @Id and state = 1";
-        private const string GET_ALL = "select * from departments where state = 1";
+        private const string DELETE = "update departments set status = 0 where id = @id";
+        private const string GET_BY = "select * from departments where id = @Id and status = 1";
+        private const string GET_ALL = "select * from departments where status = 1";
         private const string UPDATE = "update departments set code = @Code, description = @Description where id = @Id";
 
         //Create
@@ -177,6 +177,5 @@ namespace reto2Propietaria.DAO
             }
 
         }
-
     }
 }

@@ -12,28 +12,31 @@ namespace reto2Propietaria
         readonly DBCon Connection = new DBCon();
 
         //Queries
-        private const string UPDATE = "update employee set nomina_id = @NomId, dominican_id = @Cedula, name = @Name, last_name = @LastName, department = @Department, work_position = @WorkPosition, salary = @Salary where Id = @id";
+        private const string UPDATE = "update employee set nomina_id = @NomId, dominican_id = @Cedula, name = @Name, last_name = @LastName, department_id = @Department, work_position = @WorkPosition, salary = @Salary where Id = @id or dominican_id = @Cedula";
         private const string INSERT = "insert into employee values(@NomId, @Cedula, @Department, @Name, @LastName, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
         private const string GET_BY_ID = "select * from employee where id = @Id or dominican_id = @Cedula";
         private const string GET_ALL_ACTIVES = "select * from employee where state = 1";
         private const string DELETE = "update employee set state = 0, lastDay = convert(date, getDate()) where id = @id ";
 
-        //Get by Name, cedula, department
+        //Get by Name, cedula, department and nomina
         //Retornar una lista con todos los matchs para la busqueda
         public List<Employee> GetEmployeeBy(string criteria)
         {
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "select* from employee where name like '%" + criteria + "%' or last_name like '%" + criteria + "%' or dominican_id like '%" + criteria + "%' and state = 1"; ;
+
+            Cmd.CommandText = "select * from employee where nomina_id = "+ (long.TryParse(criteria, out _) ? criteria : null)  +" or dominican_id like '%" + criteria + "%' or name like '%" + criteria + "%' or last_name like '%" + criteria + "%' and state = 1";
             Cmd.CommandType = CommandType.Text;
 
             reader = Cmd.ExecuteReader();
+
+            CloseConnections(Connection, Cmd, reader);
 
             return FillEmployeeList(reader);
         }
 
 
         //Create Employees
-        public string Add(Employee employee)
+        public int Add(Employee employee)
         {
 
             Cmd.Connection = Connection.Open();
@@ -46,14 +49,7 @@ namespace reto2Propietaria
 
             CloseConnections(Connection, Cmd, null);
 
-            if (result > 0)
-            {
-                return "Emplead@, " + employee.Name + " agregado!";
-            }
-            else
-            {
-                return "Error tratando de insertar...";
-            }
+            return result;
         }
 
         //Read all employees
@@ -102,17 +98,19 @@ namespace reto2Propietaria
                     LastDay = reader.GetString(9),
                     Status = reader.GetBoolean(10)
                 };
+                CloseConnections(Connection, Cmd, reader);
                 return employee;
             }
             else
             {
+                CloseConnections(Connection, Cmd, reader);
                 return null;
             }
         }
 
         //Update employee
         //Consultar Id para retornar la info del empleado y poder editar... "Conversion failed when converting the nvarchar value 'Bianca' to data type int."
-        public string Edit(Employee e)
+        public int Edit(Employee e)
         {
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = UPDATE;
@@ -124,14 +122,7 @@ namespace reto2Propietaria
 
             CloseConnections(Connection, Cmd, null);
 
-            if (result > 0)
-            {
-                return "Emplead@ actualizado!";
-            }
-            else
-            {
-                return "Error actualizando emplead@";
-            }
+            return result;
         }
 
         //Delete employee
@@ -179,15 +170,14 @@ namespace reto2Propietaria
                 });
             }
 
+            CloseConnections(Connection, Cmd, reader);
+
             return empList;
         }
 
         private void FillEmployeeParams(SqlCommand cmd, Employee e)
         {
-            if (e.Id > 0) 
-            {
-                cmd.Parameters.AddWithValue("@Id", e.Id);
-            }
+            cmd.Parameters.AddWithValue("@Id", e.Id);
             cmd.Parameters.AddWithValue("@NomId", e.Nomina);
             cmd.Parameters.AddWithValue("@Cedula", e.Cedula);
             cmd.Parameters.AddWithValue("@Name", e.Name);
@@ -209,7 +199,6 @@ namespace reto2Propietaria
             {
                 reader.Close();
             }
-
         }
     }
 }
