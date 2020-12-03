@@ -12,7 +12,7 @@ namespace reto2Propietaria.DAO
         SqlDataReader Reader;
 
         //Queries
-        private const string INSERT = "insert into departments values(@Code, @Description, 1)";
+        private const string INSERT = "insert into departments values(UPPER(@Code), @Description, 1)";
         private const string DELETE = "update departments set status = 0 where id = @id";
         private const string GET_BY = "select * from departments where id = @Id and status = 1";
         private const string GET_ALL = "select * from departments where status = 1";
@@ -21,12 +21,11 @@ namespace reto2Propietaria.DAO
         //Create
         public string Add(EmployeeDepartment department)
         {
-
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = INSERT;
             Cmd.CommandType = CommandType.Text;
 
-            FillDepartmentParams(Cmd, department);
+            FillDepartmentParams(Cmd, department, 0);
 
             int result = Cmd.ExecuteNonQuery();
 
@@ -43,14 +42,13 @@ namespace reto2Propietaria.DAO
         }
 
         //Update
-        public string Edit(EmployeeDepartment department)
+        public string Edit(EmployeeDepartment department, int Id)
         {
-
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = UPDATE;
             Cmd.CommandType = CommandType.Text;
 
-            FillDepartmentParams(Cmd, department);
+            FillDepartmentParams(Cmd, department, Id);
 
             int result = Cmd.ExecuteNonQuery();
 
@@ -114,7 +112,6 @@ namespace reto2Propietaria.DAO
         //Delete
         public string Delete(int id)
         {
-
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = DELETE;
             Cmd.CommandType = CommandType.Text;
@@ -126,7 +123,7 @@ namespace reto2Propietaria.DAO
 
             if (conunt > 0)
             {
-                return "Eliminado";
+                return "Departamento, eliminado!";
             }
             else
             {
@@ -153,13 +150,13 @@ namespace reto2Propietaria.DAO
             return entryList;
         }
 
-        private void FillDepartmentParams(SqlCommand cmd, EmployeeDepartment e)
+        private void FillDepartmentParams(SqlCommand cmd, EmployeeDepartment e, int id)
         {
-            if (e.Id > 0)
+            if (id > 0)
             {
-                cmd.Parameters.AddWithValue("@Id", e.Id);
+                cmd.Parameters.AddWithValue("@Id", id);
             }
-            cmd.Parameters.AddWithValue("@Title", e.Code);
+            cmd.Parameters.AddWithValue("@Code", e.Code);
             cmd.Parameters.AddWithValue("@Description", e.Description);
         }
 

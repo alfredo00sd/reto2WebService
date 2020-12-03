@@ -18,7 +18,7 @@ namespace reto2Propietaria
         private readonly ProcessDAO processDAO = new ProcessDAO();
 
 
-        //----------------------------------------------Procesos - Need validations
+        //----------------------------------------------Procesos -Need validations
         [WebMethod]
         //Recibe empleado, lista de ingresos y deducciones. concepto "pago nomina" total a ingresar
         //estatus en 0 que significa sin enviar asiento contable.
@@ -30,7 +30,7 @@ namespace reto2Propietaria
             return processDAO.ProcessPago(idEmpleado, entries, deductions, concept, amount);
         }
 
-        //----------------------------------------------Accounting_seat
+        //----------------------------------------------Accounting_seat -Need validations
         //Procesar/Enviar asiento contable a WS-externo
         [WebMethod]
         //Recibe N/A
@@ -51,20 +51,35 @@ namespace reto2Propietaria
         {
             return "Transacciones que cumplan los parametros de busqueda";
         }
+        //----------------------------------------------Procesos -End
 
-        //----------------------------------------------Departments -Need validations
+        //----------------------------------------------Departments -Validaded
         //Add
         [WebMethod]
         public string Agregar_Departamento(EmployeeDepartment department) 
         {
-            return departmentDAO.Add(department);
+            if (department.Code.Length >= 3 && department.Code.Length <= 8)
+            {
+                return departmentDAO.Add(department);
+            }
+            else 
+            {
+                return "Codigo de departamento debe contener entre 3 y 8 caracteres maximo.";
+            }
         }
 
         //Edit
         [WebMethod]
-        public string Editar_Departamento(EmployeeDepartment department)
+        public string Editar_Departamento(int id, EmployeeDepartment department)
         {
-            return departmentDAO.Edit(department);
+            if (department.Code.Length >= 3 && department.Code.Length <= 8)
+            {
+                return departmentDAO.Edit(department, id);
+            }
+            else
+            {
+                return "Codigo de departamento debe contener entre 3 y 8 caracteres maximo.";
+            }
         }
 
         //Remove
@@ -81,6 +96,7 @@ namespace reto2Propietaria
             return departmentDAO.GetAll();
         }
 
+        //----------------------------------------------Departments -End
 
         //----------------------------------------------Entry_type/Deduction_type -Validaded
         //Add
@@ -180,6 +196,7 @@ namespace reto2Propietaria
         }
 
         //Get by
+        //----------------------------------------------Entry_type/Deduction_type -End
 
         //----------------------------------------------user_roles
         //Add
