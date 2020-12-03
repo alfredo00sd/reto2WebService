@@ -8,8 +8,9 @@ namespace reto2Propietaria.Models
         public string TranscType { get; set; }
         public string EntryDetails { get; set; }
         public string DeductionDetails { get; set; }
+        public string Concept { get; set; }
         public string Date { get; set; }
-        public string Amount { get; set; }
-        public byte State { get; set; }
+        public decimal Amount { get; set; }
+        public bool State { get; set; }
     }
 }

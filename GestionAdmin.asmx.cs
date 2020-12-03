@@ -1,6 +1,13 @@
-﻿using reto2Propietaria.DAO;
+﻿using Newtonsoft.Json;
+using reto2Propietaria.API;
+using reto2Propietaria.DAO;
 using reto2Propietaria.Models;
+using ServiceStack;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Web.Script.Serialization;
 using System.Web.Services;
 
 namespace reto2Propietaria
@@ -22,12 +29,29 @@ namespace reto2Propietaria
         [WebMethod]
         //Recibe empleado, lista de ingresos y deducciones. concepto "pago nomina" total a ingresar
         //estatus en 0 que significa sin enviar asiento contable.
-        public string Procesar_Nomina(int idEmpleado, string entries, string deductions, string concept, decimal amount) {
+        public string Procesar_Nomina(int idEmpleado, string type, string entries, string deductions, string concept, decimal amount) {
 
             //El calculo se hace en el front, me enviara solo que debo guardar.
 
             //entries/deductions todas separadas por | puede ser... o ,
-            return processDAO.ProcessPago(idEmpleado, entries, deductions, concept, amount);
+            return processDAO.ProcessPago(idEmpleado, type, entries, deductions, concept, amount);
+        }
+
+        //----------------------------------------------Consultas
+        //Consultar(Ver las transacciones candidatas a ser enviadas)
+        //Consulta (transacciones x tipo y empleado en un rango de fechas)
+        [WebMethod]
+        //Recibe TranscType, idEmpleado, fecha_desde, fecha_hasta, enviados/porEnviar
+        //estatus en 0 que significa sin enviar asiento contable.
+        public List<TransaccionLog> Consultar_transacciones(string transType, int idEmp, string fecha_desde, string fecha_hasta, int enviadas)
+        {
+            //if (fecha_desde.Length == 10 && fecha_hasta.Length == 10) {
+
+            //return transType + " " + idEmp + " " + fecha_desde + " " + fecha_hasta + " " + enviadas;
+            return processDAO.GetTransactions(transType, idEmp, fecha_desde, fecha_hasta, enviadas);
+            //}
+
+            //return "Transacciones que cumplan los parametros de busqueda";
         }
 
         //----------------------------------------------Accounting_seat -Need validations
@@ -38,18 +62,123 @@ namespace reto2Propietaria
         //Notifica envio.
         public string Enviar_asiento_contable()
         {
-            return "tantos procesados...";
+            //Cuentas contables : 70 (salarios y Sueldos Empleados) 71 (Gastos de Nomina Empresa)
+            //Cada grupo debe enviar al menos dos filas en cada peticion (1 Debito y 1 credito)
+            //idCuentaAuxiliar = 2 allways nomina
+            
+            // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
+
+            var url = $"https://plutus.azure-api.net/api/AccountingSeat/InsertAccountingSeats";
+            var request = (HttpWebRequest)WebRequest.Create(url);
+
+            //Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+            
+            Root obj = new Root {
+                descripcion = "Hola",
+                idCuentaAuxiliar = 2,
+                inicioPeriodo = "2020-12-01",
+                finPeriodo = "2020-12-30",
+                moneda = "DOP",
+                asientos = new List<Asiento> { new Asiento { idCuenta = 2, monto = 2000}, new Asiento { idCuenta = 2, monto = 300000 }, new Asiento { idCuenta = 2, monto = 25000 } }
+            };
+
+            var data = new JavaScriptSerializer().Serialize(obj);
+            
+            string json = data;
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                streamWriter.Write(json);
+                streamWriter.Flush();
+                streamWriter.Close();
+            }
+
+            try
+            {
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (Stream strReader = response.GetResponseStream())
+                    {
+                        if (strReader == null) return "";
+                        using (StreamReader objReader = new StreamReader(strReader))
+                        {
+                            string responseBody = objReader.ReadToEnd();
+                            // Do something with responseBody
+                            return responseBody;
+                        }
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                return "ERR";
+                // Handle error
+            }
         }
 
-        //----------------------------------------------Consultas
-        //Consultar(Ver las transacciones candidatas a ser enviadas)
-        //Consulta (transacciones x tipo y empleado en un rango de fechas)
         [WebMethod]
-        //Recibe TranscType, idEmpleado, fecha_desde, fecha_hasta, enviados/porEnviar
-        //estatus en 0 que significa sin enviar asiento contable.
-        public string Consultar_transacciones(int transType, int idEmp, string fecha_desde, string fecha_hasta, bool enviadas)
+        public string Get_asientos_from_API()
         {
-            return "Transacciones que cumplan los parametros de busqueda";
+            var url = $"https://plutus.azure-api.net/api/AccountingSeat/GetSeatByAuxiliar/2";
+            var request = (HttpWebRequest) WebRequest.Create(url);
+            request.Method = "GET";
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+
+            try
+            {
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (Stream strReader = response.GetResponseStream())
+                    {
+                        if (strReader == null) return "";
+                        using (StreamReader objReader = new StreamReader(strReader))
+                        {
+                            string responseBody = objReader.ReadToEnd();
+                            // Do something with responseBody
+                            return responseBody;
+                        }
+                    }
+                }
+                
+            }
+            catch (WebException ex)
+            {
+                return "ERORR";
+                // Handle error
+            }
+            /*
+            List<AsientoFromAPI> list = new List<AsientoFromAPI>();
+
+            //Contabilidad rest API
+            string url = "https://plutus.azure-api.net/api/AccountingSeat/GetSeatByAuxiliar/2";
+
+            // GET data from API & map to POCO
+            list.Add(url.GetJsonFromUrl().FromJson<AsientoFromAPI>());
+            
+            return list;
+            */
+        }
+
+        
+        //Procesar/Enviar asiento contable a WS-externo
+        [WebMethod]
+        //Recibe N/A
+        //Busca los estatus en 0 que significa sin enviar asiento contable.
+        //Notifica envio.
+        public List<TransaccionLog> Data_para_asiento(string desde, string hasta)
+        {
+            if (desde.Length > 5 && hasta.Length > 5)
+            {
+                return Consultar_transacciones("N", 0, desde, hasta, 0);
+            }
+            else 
+            {
+                return Consultar_transacciones("N", 0, "2017-01-01", DateTime.Now.ToString("yyyy-M-d"), 0);
+            }
         }
         //----------------------------------------------Procesos -End
 
@@ -204,4 +333,20 @@ namespace reto2Propietaria
         //Remove
         //See all
     }
+}
+
+public class Asiento
+{
+    public int idCuenta { get; set; }
+    public int monto { get; set; }
+}
+
+public class Root
+{
+    public string descripcion { get; set; }
+    public int idCuentaAuxiliar { get; set; }
+    public string inicioPeriodo { get; set; }
+    public string finPeriodo { get; set; }
+    public string moneda { get; set; }
+    public List<Asiento> asientos { get; set; }
 }
