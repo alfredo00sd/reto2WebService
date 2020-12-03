@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -16,24 +17,33 @@ namespace reto2Propietaria
         private const string INSERT = "insert into employee values(@NomId, @Cedula, @Department, @Name, @LastName, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
         private const string GET_BY_ID = "select * from employee where id = @Id or dominican_id = @Cedula";
         private const string GET_ALL_ACTIVES = "select * from employee where state = 1";
-        private const string DELETE = "update employee set state = 0, lastDay = convert(date, getDate()) where id = @id ";
+        private const string DELETE = "update employee set state = 0, last_day = convert(date, getDate()) where id = @id ";
 
-        //Get by Name, cedula, department and nomina
+        //Get by Name, cedula and nomina
         //Retornar una lista con todos los matchs para la busqueda
         public List<Employee> GetEmployeeBy(string criteria)
         {
             Cmd.Connection = Connection.Open();
+            List<Employee> dtoList;
+        
+            long Nom = 0L;
+            
+            if (long.TryParse(criteria, out _)) 
+            {
+                Nom = long.Parse(criteria);
+            }
 
-            Cmd.CommandText = "select * from employee where nomina_id = "+ (long.TryParse(criteria, out _) ? criteria : null)  +" or dominican_id like '%" + criteria + "%' or name like '%" + criteria + "%' or last_name like '%" + criteria + "%' and state = 1";
+            Cmd.CommandText = "select * from employee where nomina_id = "+ Nom  +" or dominican_id like '%" + criteria + "%' or name like '%" + criteria + "%' or last_name like '%" + criteria + "%' and state = 1";
             Cmd.CommandType = CommandType.Text;
 
             reader = Cmd.ExecuteReader();
+            
+            dtoList = FillEmployeeList(reader);
 
             CloseConnections(Connection, Cmd, reader);
 
-            return FillEmployeeList(reader);
+            return dtoList;
         }
-
 
         //Create Employees
         public int Add(Employee employee)
@@ -169,9 +179,6 @@ namespace reto2Propietaria
                     Status = reader.GetBoolean(10)
                 });
             }
-
-            CloseConnections(Connection, Cmd, reader);
-
             return empList;
         }
 

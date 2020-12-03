@@ -19,7 +19,7 @@ namespace reto2Propietaria.DAO
             Cmd.CommandText = "insert into "+table+" values(@Title, @Value, @Description, @SalaryDependent, GETDATE(), 1)";
             Cmd.CommandType = CommandType.Text;
 
-            FillEntryParams(Cmd, entry);
+            FillEntryParams(Cmd, entry, 0);
 
             int result = Cmd.ExecuteNonQuery();
 
@@ -36,14 +36,14 @@ namespace reto2Propietaria.DAO
         }
 
         //Update
-        public string Edit(EntryType entry, string table)
+        public string Edit(EntryType entry, string table, int id)
         {
 
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = "update "+table+ " set title = @Title, value = @Value, description = @Description, salary_dependent = @SalaryDependent where id = @Id";
             Cmd.CommandType = CommandType.Text;
 
-            FillEntryParams(Cmd, entry);
+            FillEntryParams(Cmd, entry, id);
 
             int result = Cmd.ExecuteNonQuery();
 
@@ -152,11 +152,11 @@ namespace reto2Propietaria.DAO
             return entryList;
         }
 
-        private void FillEntryParams(SqlCommand cmd, EntryType e)
+        private void FillEntryParams(SqlCommand cmd, EntryType e, int id)
         {
-            if (e.Id > 0)
+            if (id > 0)
             {
-                cmd.Parameters.AddWithValue("@Id", e.Id);
+                cmd.Parameters.AddWithValue("@Id", id);
             }
             cmd.Parameters.AddWithValue("@Title", e.Title);
             cmd.Parameters.AddWithValue("@Value", e.Value);

@@ -32,12 +32,25 @@ namespace reto2Propietaria
 
         //----------------------------------------------Accounting_seat
         //Procesar/Enviar asiento contable a WS-externo
-
-        //Consultar(Ver las transacciones candidatas a ser enviadas)
+        [WebMethod]
+        //Recibe N/A
+        //Busca los estatus en 0 que significa sin enviar asiento contable.
+        //Notifica envio.
+        public string Enviar_asiento_contable()
+        {
+            return "tantos procesados...";
+        }
 
         //----------------------------------------------Consultas
+        //Consultar(Ver las transacciones candidatas a ser enviadas)
         //Consulta (transacciones x tipo y empleado en un rango de fechas)
-
+        [WebMethod]
+        //Recibe TranscType, idEmpleado, fecha_desde, fecha_hasta, enviados/porEnviar
+        //estatus en 0 que significa sin enviar asiento contable.
+        public string Consultar_transacciones(int transType, int idEmp, string fecha_desde, string fecha_hasta, bool enviadas)
+        {
+            return "Transacciones que cumplan los parametros de busqueda";
+        }
 
         //----------------------------------------------Departments -Need validations
         //Add
@@ -95,7 +108,7 @@ namespace reto2Propietaria
         
         //Edit
         [WebMethod]
-        public string Actualizar_Ing_Ded(EntryType entry, string tipoIngresoDeduccion)
+        public string Actualizar_Ing_Ded(EntryType entry, int id, string tipoIngresoDeduccion)
         {
             string result;
 
@@ -104,11 +117,11 @@ namespace reto2Propietaria
                 case "Ingreso":
                 case "INGRESO":
                 case "ingreso":
-                    result = entryDAO.Edit(entry, "entry_type"); break;
+                    result = entryDAO.Edit(entry, "entry_type", id); break;
                 case "Deduccion":
                 case "deduccion":
                 case "DEDUCCION":
-                    result = entryDAO.Edit(entry, "deduction_type");
+                    result = entryDAO.Edit(entry, "deduction_type", id);
                     break;
 
                 default: result = "Argumuento tipo incorrecto, favor coloar tipo : Ingreso o Deduccion"; break;
