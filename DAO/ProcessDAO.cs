@@ -11,13 +11,55 @@ namespace reto2Propietaria.DAO
         readonly DBCon Connection = new DBCon();
         SqlDataReader reader;
 
-        public string ProcessPago(int empId, string type, string entries, string deductions, string concept, decimal amount) {
+        public decimal GetAmount(string desde, string hasta) 
+        {
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "select sum(amount) as total_credit from transaction_log where (date >= @Desde and date <= @Hasta) and type = 'CR' and status = 0";
+            Cmd.CommandType = CommandType.Text;
+            Cmd.Parameters.AddWithValue("@Desde", desde);
+            Cmd.Parameters.AddWithValue("@Hasta", hasta);
+
+            reader = Cmd.ExecuteReader();
+
+            if (reader.Read() && !reader.IsDBNull(0))
+            {
+                return reader.GetDecimal(0);
+            }
+            else 
+            {
+                return 0;
+            }
+        }
+
+        public string LogOnDB(string desde, string hasta) 
+        {
+            Cmd.Connection = Connection.Open();
+            Cmd.CommandText = "update transaction_log set status = 1 where (date >= @Desde and date <= @Hasta) and type = 'CR'";
+            Cmd.CommandType = CommandType.Text;
+            Cmd.Parameters.AddWithValue("@Desde", desde);
+            Cmd.Parameters.AddWithValue("@Hasta", hasta);
+
+            int result = Cmd.ExecuteNonQuery();
+
+            CloseConnections(Connection, Cmd, null);
+
+            if (result > 1)
+            {
+                return "OK";
+            }
+            else 
+            {
+                return "ERR saving data on db for transaction desde: " + desde + " hasta: "+ hasta;
+            }
+        }
+
+        public string ProcessPago(int empId, string entries, string deductions, string concept, decimal amount) {
 
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = "insert into transaction_log values(@EmpId, @Type, @Entries, @Deductions, @Concept, ''+GETDATE(), @Amount, 0)";
             Cmd.CommandType = CommandType.Text;
             Cmd.Parameters.AddWithValue("@EmpId", empId);
-            Cmd.Parameters.AddWithValue("@Type", type);
+            Cmd.Parameters.AddWithValue("@Type", "CR");
             Cmd.Parameters.AddWithValue("@Entries", entries);
             Cmd.Parameters.AddWithValue("@Deductions", deductions);
             Cmd.Parameters.AddWithValue("@Concept", concept);

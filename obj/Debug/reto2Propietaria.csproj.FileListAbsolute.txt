@@ -57,8 +57,6 @@ C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Deb
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.pdb
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Debug\reto2Propietaria.csprojAssemblyReference.cache
-C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Microsoft.Graph.Core.dll
-C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Microsoft.Graph.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Newtonsoft.Json.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\ServiceStack.Text.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Buffers.dll
@@ -66,8 +64,6 @@ C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Sys
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Memory.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Numerics.Vectors.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Runtime.CompilerServices.Unsafe.dll
-C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Microsoft.Graph.xml
-C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Microsoft.Graph.Core.xml
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Newtonsoft.Json.xml
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\ServiceStack.Text.xml
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Buffers.xml

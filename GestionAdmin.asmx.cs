@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
-using reto2Propietaria.API;
-using reto2Propietaria.DAO;
+﻿using reto2Propietaria.DAO;
 using reto2Propietaria.Models;
-using ServiceStack;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,12 +26,12 @@ namespace reto2Propietaria
         [WebMethod]
         //Recibe empleado, lista de ingresos y deducciones. concepto "pago nomina" total a ingresar
         //estatus en 0 que significa sin enviar asiento contable.
-        public string Procesar_Nomina(int idEmpleado, string type, string entries, string deductions, string concept, decimal amount) {
+        public string Procesar_Nomina(int idEmpleado, string entries, string deductions, string concept, decimal amount) {
 
             //El calculo se hace en el front, me enviara solo que debo guardar.
 
             //entries/deductions todas separadas por | puede ser... o ,
-            return processDAO.ProcessPago(idEmpleado, type, entries, deductions, concept, amount);
+            return processDAO.ProcessPago(idEmpleado, entries, deductions, concept, amount);
         }
 
         //----------------------------------------------Consultas
@@ -49,6 +46,7 @@ namespace reto2Propietaria
 
             //return transType + " " + idEmp + " " + fecha_desde + " " + fecha_hasta + " " + enviadas;
             return processDAO.GetTransactions(transType, idEmp, fecha_desde, fecha_hasta, enviadas);
+            //Type transc emp = CR
             //}
 
             //return "Transacciones que cumplan los parametros de busqueda";
@@ -58,9 +56,10 @@ namespace reto2Propietaria
         //Procesar/Enviar asiento contable a WS-externo
         [WebMethod]
         //Recibe N/A
+        //Date format : 2020-12-01
         //Busca los estatus en 0 que significa sin enviar asiento contable.
         //Notifica envio.
-        public string Enviar_asiento_contable()
+        public string Enviar_asiento_contable(string desde, string hasta)
         {
             //Cuentas contables : 70 (salarios y Sueldos Empleados) 71 (Gastos de Nomina Empresa)
             //Cada grupo debe enviar al menos dos filas en cada peticion (1 Debito y 1 credito)
@@ -72,54 +71,76 @@ namespace reto2Propietaria
             var request = (HttpWebRequest)WebRequest.Create(url);
 
             //Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-            
-            Root obj = new Root {
-                descripcion = "Hola",
-                idCuentaAuxiliar = 2,
-                inicioPeriodo = "2020-12-01",
-                finPeriodo = "2020-12-30",
-                moneda = "DOP",
-                asientos = new List<Asiento> { new Asiento { idCuenta = 2, monto = 2000}, new Asiento { idCuenta = 2, monto = 300000 }, new Asiento { idCuenta = 2, monto = 25000 } }
-            };
 
-            var data = new JavaScriptSerializer().Serialize(obj);
-            
-            string json = data;
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.Accept = "application/json";
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            if (desde.Length == 10 && hasta.Length == 10)
             {
-                streamWriter.Write(json);
-                streamWriter.Flush();
-                streamWriter.Close();
-            }
+                decimal monto_a_enviar = processDAO.GetAmount(desde, hasta);
 
-            try
-            {
-                using (WebResponse response = request.GetResponse())
+                if (monto_a_enviar > 0)
                 {
-                    using (Stream strReader = response.GetResponseStream())
+                    //Hoja envio de asiento.
+                    Root obj = new Root
                     {
-                        if (strReader == null) return "";
-                        using (StreamReader objReader = new StreamReader(strReader))
+                        descripcion = "Asiento de Nomina de empleados " + DateTime.Now.ToString("Y"),
+                        idCuentaAuxiliar = 2,
+                        inicioPeriodo = desde,
+                        finPeriodo = hasta,
+                        moneda = "DOP",
+                        asientos = new List<Asiento> { new Asiento { idCuenta = 1, monto = Convert.ToInt32(monto_a_enviar) }, new Asiento { idCuenta = 2, monto = Convert.ToInt32(monto_a_enviar) } }
+                    };
+
+                    var data = new JavaScriptSerializer().Serialize(obj);
+
+                    string json = data;
+                    request.Method = "POST";
+                    request.ContentType = "application/json";
+                    request.Accept = "application/json";
+
+                    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                    {
+                        streamWriter.Write(json);
+                        streamWriter.Flush();
+                        streamWriter.Close();
+                    }
+
+                    try
+                    {
+                        using (WebResponse response = request.GetResponse())
                         {
-                            string responseBody = objReader.ReadToEnd();
-                            // Do something with responseBody
-                            return responseBody;
+                            using (Stream strReader = response.GetResponseStream())
+                            {
+                                if (strReader == null) return "";
+                                using (StreamReader objReader = new StreamReader(strReader))
+                                {
+                                    string responseBody = objReader.ReadToEnd();
+                                    if (responseBody.Contains("Su número de asiento es #"))
+                                    {
+                                        //processDAO.LogOnDB(desde, hasta);
+                                    }
+                                    return responseBody;
+                                }
+                            }
                         }
                     }
+                    catch (WebException ex)
+                    {
+                        return "ERR: " + ex.Status + " desc : " + ex.Message;
+                    }
+                }
+                else
+                {
+                    return "No se han encontrado registros para el periodo evaluado.";
+
                 }
             }
-            catch (WebException ex)
+            else 
             {
-                return "ERR";
-                // Handle error
+                return "Formato de fecha invalido, favor enviar con formato 2020-12-31";
             }
         }
 
         [WebMethod]
+        //Obtener los asientos enviados al web-service externo API-contabilidad.
         public string Get_asientos_from_API()
         {
             var url = $"https://plutus.azure-api.net/api/AccountingSeat/GetSeatByAuxiliar/2";
@@ -130,16 +151,19 @@ namespace reto2Propietaria
 
             try
             {
+                
                 using (WebResponse response = request.GetResponse())
                 {
                     using (Stream strReader = response.GetResponseStream())
                     {
-                        if (strReader == null) return "";
+                        if (strReader == null) return "NULL";
                         using (StreamReader objReader = new StreamReader(strReader))
                         {
                             string responseBody = objReader.ReadToEnd();
                             // Do something with responseBody
                             return responseBody;
+                            //var model = JsonConvert.DeserializeObject<List<Root>>(request.GetResponse());
+
                         }
                     }
                 }
@@ -163,12 +187,9 @@ namespace reto2Propietaria
             */
         }
 
-        
-        //Procesar/Enviar asiento contable a WS-externo
         [WebMethod]
-        //Recibe N/A
-        //Busca los estatus en 0 que significa sin enviar asiento contable.
-        //Notifica envio.
+        //Busca los asientos no enviados en el perido indicado o periodo general.
+        //Consultar data a ser enviada para asiento contable.
         public List<TransaccionLog> Data_para_asiento(string desde, string hasta)
         {
             if (desde.Length > 5 && hasta.Length > 5)
