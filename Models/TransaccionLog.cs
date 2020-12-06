@@ -4,7 +4,7 @@ namespace reto2Propietaria.Models
     public class TransaccionLog
     {
         public int Id { get; set; }
-        public int EmpId { get; set; }
+        public string Cedula { get; set; }
         public string TranscType { get; set; }
         public string EntryDetails { get; set; }
         public string DeductionDetails { get; set; }

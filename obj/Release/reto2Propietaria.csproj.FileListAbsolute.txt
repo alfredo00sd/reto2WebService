@@ -57,3 +57,17 @@ C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Rel
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Release\reto2Propietaria.csproj.CopyComplete
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Release\reto2Propietaria.dll
 C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\obj\Release\reto2Propietaria.pdb
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Newtonsoft.Json.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\ServiceStack.Text.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Buffers.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Diagnostics.DiagnosticSource.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Memory.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Numerics.Vectors.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\Newtonsoft.Json.xml
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\ServiceStack.Text.xml
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Buffers.xml
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Diagnostics.DiagnosticSource.xml
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Memory.xml
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Numerics.Vectors.xml
+C:\Users\7440\Desktop\Cuatrimestre 7\Desarrolla prop II\reto2Propietaria\bin\System.Runtime.CompilerServices.Unsafe.xml

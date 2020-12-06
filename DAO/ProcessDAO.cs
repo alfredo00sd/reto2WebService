@@ -53,12 +53,12 @@ namespace reto2Propietaria.DAO
             }
         }
 
-        public string ProcessPago(int empId, string entries, string deductions, string concept, decimal amount) {
+        public string ProcessPago(string cedula, string entries, string deductions, string concept, decimal amount) {
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "insert into transaction_log values(@EmpId, @Type, @Entries, @Deductions, @Concept, ''+GETDATE(), @Amount, 0)";
+            Cmd.CommandText = "insert into transaction_log values(@Cedula, @Type, @Entries, @Deductions, @Concept, ''+GETDATE(), @Amount, 0)";
             Cmd.CommandType = CommandType.Text;
-            Cmd.Parameters.AddWithValue("@EmpId", empId);
+            Cmd.Parameters.AddWithValue("@Cedula", cedula);
             Cmd.Parameters.AddWithValue("@Type", "CR");
             Cmd.Parameters.AddWithValue("@Entries", entries);
             Cmd.Parameters.AddWithValue("@Deductions", deductions);
@@ -80,12 +80,12 @@ namespace reto2Propietaria.DAO
             }
         }
 
-        public List<TransaccionLog> GetTransactions(string transType, int idEmp, string fecha_desde, string fecha_hasta, int enviadas)
+        public List<TransaccionLog> GetTransactions(string transType, string cedula, string fecha_desde, string fecha_hasta, int enviadas)
         {
             List<TransaccionLog> dtoList = new List<TransaccionLog>();
             //enviadas (1 = procesadas, 0 = por procesar)
             string param1 = transType.Length > 1 ? " and type = @Type " : ""; 
-            string param2 = idEmp > 0 ? " and employee_id = @EmpId " : "";
+            string param2 = cedula.Length == 11 ? " and dominican_id = @Cedula " : "";
             string param3 = enviadas == 1 || enviadas == 0 ? " and status = @Status " : "";  
            
 
@@ -102,7 +102,7 @@ namespace reto2Propietaria.DAO
             Cmd.Connection = Connection.Open();
             Cmd.CommandText = query;
             Cmd.CommandType = CommandType.Text;
-            Cmd.Parameters.AddWithValue("@EmpId", idEmp);
+            Cmd.Parameters.AddWithValue("@Cedula", cedula);
             Cmd.Parameters.AddWithValue("@Type", transType);
             Cmd.Parameters.AddWithValue("@FechaDesde", fecha_desde);
             Cmd.Parameters.AddWithValue("@FechaHasta", fecha_hasta);
@@ -115,7 +115,7 @@ namespace reto2Propietaria.DAO
                 dtoList.Add(new TransaccionLog
                 {
                     Id = reader.GetInt32(0),
-                    EmpId = reader.GetInt32(1),
+                    Cedula = reader.GetString(1),
                     TranscType = reader.GetString(2),
                     EntryDetails = reader.GetString(3),
                     DeductionDetails = reader.GetString(4),

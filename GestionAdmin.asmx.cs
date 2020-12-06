@@ -26,12 +26,12 @@ namespace reto2Propietaria
         [WebMethod]
         //Recibe empleado, lista de ingresos y deducciones. concepto "pago nomina" total a ingresar
         //estatus en 0 que significa sin enviar asiento contable.
-        public string Procesar_Nomina(int idEmpleado, string entries, string deductions, string concept, decimal amount) {
+        public string Procesar_Nomina(string cedula, string entries, string deductions, string concept, decimal amount) {
 
             //El calculo se hace en el front, me enviara solo que debo guardar.
 
             //entries/deductions todas separadas por | puede ser... o ,
-            return processDAO.ProcessPago(idEmpleado, entries, deductions, concept, amount);
+            return processDAO.ProcessPago(cedula, entries, deductions, concept, amount);
         }
 
         //----------------------------------------------Consultas
@@ -40,12 +40,12 @@ namespace reto2Propietaria
         [WebMethod]
         //Recibe TranscType, idEmpleado, fecha_desde, fecha_hasta, enviados/porEnviar
         //estatus en 0 que significa sin enviar asiento contable.
-        public List<TransaccionLog> Consultar_transacciones(string transType, int idEmp, string fecha_desde, string fecha_hasta, int enviadas)
+        public List<TransaccionLog> Consultar_transacciones(string transType, string cedula, string fecha_desde, string fecha_hasta, int enviadas)
         {
             //if (fecha_desde.Length == 10 && fecha_hasta.Length == 10) {
 
             //return transType + " " + idEmp + " " + fecha_desde + " " + fecha_hasta + " " + enviadas;
-            return processDAO.GetTransactions(transType, idEmp, fecha_desde, fecha_hasta, enviadas);
+            return processDAO.GetTransactions(transType, cedula, fecha_desde, fecha_hasta, enviadas);
             //Type transc emp = CR
             //}
 
@@ -86,7 +86,7 @@ namespace reto2Propietaria
                         inicioPeriodo = desde,
                         finPeriodo = hasta,
                         moneda = "DOP",
-                        asientos = new List<Asiento> { new Asiento { idCuenta = 1, monto = Convert.ToInt32(monto_a_enviar) }, new Asiento { idCuenta = 2, monto = Convert.ToInt32(monto_a_enviar) } }
+                        asientos = new List<Asiento> { new Asiento { idCuenta = 18, monto = Convert.ToInt32(monto_a_enviar) }, new Asiento { idCuenta = 2, monto = Convert.ToInt32(monto_a_enviar) } }
                     };
 
                     var data = new JavaScriptSerializer().Serialize(obj);
@@ -115,7 +115,14 @@ namespace reto2Propietaria
                                     string responseBody = objReader.ReadToEnd();
                                     if (responseBody.Contains("Su número de asiento es #"))
                                     {
-                                        //processDAO.LogOnDB(desde, hasta);
+                                        if (desde.Length == 10 && hasta.Length == 10)
+                                        {
+                                            processDAO.LogOnDB(desde, hasta);
+                                        }
+                                        else 
+                                        {
+                                            processDAO.LogOnDB("2017-01-01", DateTime.Now.ToString("yyyy-M-d"));
+                                        }
                                     }
                                     return responseBody;
                                 }
@@ -171,7 +178,7 @@ namespace reto2Propietaria
             }
             catch (WebException ex)
             {
-                return "ERORR";
+                return "ERR: " + ex.Status + " desc: "+ex.Message;
                 // Handle error
             }
             /*
@@ -194,11 +201,11 @@ namespace reto2Propietaria
         {
             if (desde.Length > 5 && hasta.Length > 5)
             {
-                return Consultar_transacciones("N", 0, desde, hasta, 0);
+                return Consultar_transacciones("N", "NULL", desde, hasta, 0);
             }
             else 
             {
-                return Consultar_transacciones("N", 0, "2017-01-01", DateTime.Now.ToString("yyyy-M-d"), 0);
+                return Consultar_transacciones("N", "NULL", "2017-01-01", DateTime.Now.ToString("yyyy-M-d"), 0);
             }
         }
         //----------------------------------------------Procesos -End
