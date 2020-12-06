@@ -78,6 +78,12 @@ namespace reto2Propietaria
 
                 if (monto_a_enviar > 0)
                 {
+                    if (!(desde.Length == 10 && hasta.Length == 10))
+                    {
+                        desde = "2017-01-01";
+                        hasta = DateTime.Now.ToString("yyyy-M-d");
+                    }
+
                     //Hoja envio de asiento.
                     Root obj = new Root
                     {
@@ -115,14 +121,7 @@ namespace reto2Propietaria
                                     string responseBody = objReader.ReadToEnd();
                                     if (responseBody.Contains("Su número de asiento es #"))
                                     {
-                                        if (desde.Length == 10 && hasta.Length == 10)
-                                        {
-                                            processDAO.LogOnDB(desde, hasta);
-                                        }
-                                        else 
-                                        {
-                                            processDAO.LogOnDB("2017-01-01", DateTime.Now.ToString("yyyy-M-d"));
-                                        }
+                                        processDAO.LogOnDB(desde, hasta);
                                     }
                                     return responseBody;
                                 }
