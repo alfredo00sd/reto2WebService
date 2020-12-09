@@ -14,10 +14,10 @@ namespace reto2Propietaria
 
         //Queries
         private const string UPDATE = "update employee set nomina_id = @NomId, dominican_id = @Cedula, name = @Name, last_name = @LastName, department_id = @Department, work_position = @WorkPosition, salary = @Salary where Id = @id or dominican_id = @Cedula";
-        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Department, @Name, @LastName, @WorkPosition, @Salary, convert(date, getDate()), 'N/A', 1)";
+        private const string INSERT = "insert into employee values(@NomId, @Cedula, @Department, @Name, @LastName, @WorkPosition, @Salary, FORMAT(getdate(), 'yyyy-M-dd'), 'N/A', 1)";
         private const string GET_BY_ID = "select * from employee where id = @Id or dominican_id = @Cedula";
         private const string GET_ALL_ACTIVES = "select * from employee where state = 1";
-        private const string DELETE = "update employee set state = 0, last_day = convert(date, getDate()) where id = @id ";
+        private const string DELETE = "update employee set state = 0, last_day = FORMAT(getdate(), 'yyyy-M-dd') where id = @id ";
 
         //Get by Name, cedula and nomina
         //Retornar una lista con todos los matchs para la busqueda

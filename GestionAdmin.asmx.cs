@@ -81,7 +81,7 @@ namespace reto2Propietaria
                     if (!(desde.Length == 10 && hasta.Length == 10))
                     {
                         desde = "2017-01-01";
-                        hasta = DateTime.Now.ToString("yyyy-M-d");
+                        hasta = DateTime.Now.ToString("yyyy-M-dd");
                     }
 
                     //Hoja envio de asiento.
@@ -204,7 +204,7 @@ namespace reto2Propietaria
             }
             else 
             {
-                return Consultar_transacciones("N", "NULL", "2017-01-01", DateTime.Now.ToString("yyyy-M-d"), 0);
+                return Consultar_transacciones("N", "NULL", "2017-01-01", DateTime.Now.ToString("yyyy-M-dd"), 0);
             }
         }
         //----------------------------------------------Procesos -End

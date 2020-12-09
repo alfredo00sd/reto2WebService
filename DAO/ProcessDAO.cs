@@ -56,7 +56,7 @@ namespace reto2Propietaria.DAO
         public string ProcessPago(string cedula, string entries, string deductions, string concept, decimal amount) {
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "insert into transaction_log values(@Cedula, @Type, @Entries, @Deductions, @Concept, ''+GETDATE(), @Amount, 0)";
+            Cmd.CommandText = "insert into transaction_log values(@Cedula, @Type, @Entries, @Deductions, @Concept, FORMAT(getdate(), 'yyyy-M-dd'), @Amount, 0)";
             Cmd.CommandType = CommandType.Text;
             Cmd.Parameters.AddWithValue("@Cedula", cedula);
             Cmd.Parameters.AddWithValue("@Type", "CR");

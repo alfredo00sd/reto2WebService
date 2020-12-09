@@ -16,7 +16,7 @@ namespace reto2Propietaria.DAO
         {
 
             Cmd.Connection = Connection.Open();
-            Cmd.CommandText = "insert into "+table+" values(@Title, @Value, @Description, @SalaryDependent, GETDATE(), 1)";
+            Cmd.CommandText = "insert into "+table+ " values(@Title, @Value, @Description, @SalaryDependent, FORMAT(getdate(), 'yyyy-M-dd'), 1)";
             Cmd.CommandType = CommandType.Text;
 
             FillEntryParams(Cmd, entry, 0);
